@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Security.Claims;
 using TryingOutAuth0.Auth;
+using TryingOutAuth0.Auth.Auth0Client;
 
 namespace TryingOutAuth0
 {
@@ -28,8 +29,11 @@ namespace TryingOutAuth0
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Setting up app settings
+            services.Configure<AppSettings>(Configuration);
+            var appSettings = Configuration.Get<AppSettings>();
 
-            string domain = $"https://{Configuration["Auth0:Domain"]}/";
+            string domain = $"{Utils.URLFromDomain(appSettings.Auth0.Domain)}";
 
             services.AddAuthentication(options =>
             {
@@ -53,6 +57,7 @@ namespace TryingOutAuth0
             });
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+            services.AddSingleton<AuthClientService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
