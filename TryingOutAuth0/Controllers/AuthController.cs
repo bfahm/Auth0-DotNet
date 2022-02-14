@@ -21,9 +21,17 @@ namespace TryingOutAuth0.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginRequestViewModel request)
+        public async Task<IActionResult> Login(AuthenticationRequestViewModel request)
         {
             var test = await _authClientService.LoginAsync(request.Email, request.Password);
+            return Ok(test);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Signup(AuthenticationRequestViewModel request)
+        {
+            var test = await _authClientService.SignupAsync(request.Email, request.Password);
             return Ok(test);
         }
 

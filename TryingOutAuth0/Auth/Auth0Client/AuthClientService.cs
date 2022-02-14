@@ -50,6 +50,33 @@ namespace TryingOutAuth0.Auth.Auth0Client
             return "Could not authenticate user.";
         }
 
+        public async Task<bool> SignupAsync(string email, string password)
+        {
+            using var client = new HttpClient();
+            client.BaseAddress = new Uri($"{Utils.URLFromDomain(_appSettings.Auth0.Domain)}");
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var payload = new
+            {
+                client_id = _appSettings.Auth0.client_id,
+                email = email,
+                password = password,
+                connection = _appSettings.Auth0.Connection
+            };
+
+            var response = await client.PostAsJsonAsync("dbconnections/signup", payload);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseString = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Your response data is: " + responseString);
+
+                return true;
+            }
+
+            return false;
+        }
+
         public async Task<string> GetEmailAsync(string token)
         {
             using var client = new HttpClient();
